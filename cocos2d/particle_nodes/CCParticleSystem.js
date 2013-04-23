@@ -1388,14 +1388,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
+
                         } else {
                             var myTIFFObj = cc.TIFFReader.getInstance();
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
+
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+
                         var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
-                        this.setTexture(addTexture);
+
+                        if (cc.renderContextType === cc.CANVAS)
+                            this.setTexture(canvasObj);
+                        else
+                            this.setTexture(addTexture);
+
                     }
                 }
 

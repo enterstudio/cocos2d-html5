@@ -1522,7 +1522,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.AffineTransform}
      */
     nodeToParentTransform:function () {
-        if (true || this._transformDirty) {
+        if (this._transformDirty) {
             // Translate values
             var x = this._position.x;
             var y = this._position.y;
@@ -3147,13 +3147,11 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             t.tx += Cos * -this._anchorPointInPoints.x * this._scaleX + -Sin * this._anchorPointInPoints.y * this._scaleY;
             t.ty -= Sin * -this._anchorPointInPoints.x * this._scaleX + Cos * this._anchorPointInPoints.y * this._scaleY;
 
-console.log('tx', t.tx, 'ty', t.ty);
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
                 t.tx += this._anchorPointInPoints.x;
                 t.ty += this._anchorPointInPoints.y;
             }
-            console.log('tx', t.tx, 'ty', t.ty);
 
             if (this._additionalTransformDirty) {
                 this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
