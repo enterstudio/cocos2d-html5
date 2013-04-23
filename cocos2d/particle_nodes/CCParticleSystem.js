@@ -25,16 +25,16 @@
  ****************************************************************************/
 
 // ideas taken from:
-//	 . The ocean spray in your face [Jeff Lander]
-//		http://www.double.co.nz/dust/col0798.pdf
-//	 . Building an Advanced Particle System [John van der Burg]
-//		http://www.gamasutra.com/features/20000623/vanderburg_01.htm
+//   . The ocean spray in your face [Jeff Lander]
+//      http://www.double.co.nz/dust/col0798.pdf
+//   . Building an Advanced Particle System [John van der Burg]
+//      http://www.gamasutra.com/features/20000623/vanderburg_01.htm
 //   . LOVE game engine
-//		http://love2d.org/
+//      http://love2d.org/
 //
 //
 // Radius mode support, from 71 squared
-//		http://particledesigner.71squared.com/
+//      http://particledesigner.71squared.com/
 //
 // IMPORTANT: Particle Designer is supported by cocos2d, but
 // 'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,
@@ -264,7 +264,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _particlePool:null,
 
     // color modulate
-    //	BOOL colorModulate;
+    //  BOOL colorModulate;
 
     //! How many particles can be emitted per second
     _emitCounter:0,
@@ -1369,54 +1369,30 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         this.setTexture(tex);
                     } else {
-                        //TODO need implement parse image data for cc.Image
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer) {
                             cc.log("cc.ParticleSystem: error decoding or ungzipping textureImageData");
                             return false;
                         }
 
-                        var imageFormat = cc.getImageFormatByData(buffer);
-                        //if(cc.renderContextType === cc.CANVAS){
-                        if(imageFormat === cc.FMT_PNG){
-                            cc.log("Image format:PNG");
-                            var newImageData = cc.encodeToBase64(buffer);
-                            if (!newImageData)
-                                return false;
-
-                            var img = new Image();
-                            img.src = "data:image/png;base64," + newImageData;
-
-                            // Manually decode the base 64 image size since the browser will only do so asynchronously
-                            var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
-                                h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
-
-                            // Patch this on so we can correctly create the draw rect later on
-                            img.textureWidth = w;
-                            img.textureHeight = h;
-
-                            cc.TextureCache.getInstance().cacheImage(fullpath, img);
-                            this._texture = cc.TextureCache.getInstance().textureForKey(textureName);
-
-                            cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
-                            this.setTexture(this._texture);
-
-                        } else {
-                            if(imageFormat === cc.FMT_TIFF)
-                                cc.log("Image format:TIFF");
-                            else
-                                cc.log("Image format:UNKNOWN");
-
-                            //this.setTexture(cc.TextureCache.getInstance().textureForKey(s_stars1));
-
-                            /*var uiImage = new cc.Image();
-                            var isOK = uiImage.initWithImageData(buffer,buffer.length);
-                            if(!isOK){
-                                cc.log("cc.ParticleSystem: error init image with Data");
-                                return false;
-                            }
-                            this.setTexture(cc.TextureCache.getInstance().addUIImage(uiImage,fullpath));*/
+                        var imageFormat = cc.FMT_PNG;
+                        if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
+                            cc.log("cc.ParticleSystem: unknown image format with Data");
+                            return false;
                         }
+
+                        var canvasObj = document.createElement("canvas");
+                        if(imageFormat === cc.FMT_PNG){
+                            var myPngObj = new cc.PNGReader(buffer);
+                            myPngObj.render(canvasObj);
+                        } else {
+                            var myTIFFObj = cc.TIFFReader.getInstance();
+                            myTIFFObj.parseTIFF(buffer,canvasObj);
+                        }
+                        cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+                        var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+                        cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
+                        this.setTexture(addTexture);
                     }
                 }
 
@@ -1462,7 +1438,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // default: modulate
         // XXX: not used
-        //	colorModulate = YES;
+        //  colorModulate = YES;
         this._isAutoRemoveOnFinish = false;
 
         // Optimization: compile udpateParticle method
@@ -1851,11 +1827,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    // return cc.ParticleSystemQuad.create(plistFile);
-    var particle = new cc.ParticleSystem();
+    return cc.ParticleSystemQuad.create(plistFile);
+    /*var particle = new cc.ParticleSystem();
     if (particle && particle.initWithFile(plistFile))
         return particle;
-    return null;
+    return null;*/
 };
 
 /**
@@ -1864,12 +1840,12 @@ cc.ParticleSystem.create = function (plistFile) {
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    //return cc.ParticleSystemQuad.create(number_of_particles);
-    //emitter.initWithTotalParticles(number_of_particles);
+    return cc.ParticleSystemQuad.create(number_of_particles);
+    /*//emitter.initWithTotalParticles(number_of_particles);
     var particle = new cc.ParticleSystem();
     if (particle && particle.initWithTotalParticles(number_of_particles))
         return particle;
-    return null;
+    return null;*/
 };
 
 // Different modes

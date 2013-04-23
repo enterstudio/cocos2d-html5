@@ -62,7 +62,7 @@ cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
 };
 
 cc.__PointApplyAffineTransform = function (point, t) {
-    return {x: t.a * point.x + t.c * point.y + t.tx, y: t.b * point.x + t.d * point.y + t.ty};
+    return {x: (t.a * point.x) + (t.c * point.y) + t.tx, y: (t.b * point.x) + (t.d * point.y) + t.ty};
 };
 
 /**
@@ -73,7 +73,7 @@ cc.__PointApplyAffineTransform = function (point, t) {
  * Constructor
  */
 cc.PointApplyAffineTransform = function (point, t) {
-    return {x: t.a * point.x + t.c * point.y + t.tx, y: t.b * point.x + t.d * point.y + t.ty};
+    return {x: (t.a * point.x) + (t.c * point.y) + t.tx, y: (t.b * point.x) + (t.d * point.y) + t.ty};
 };
 
 cc.__SizeApplyAffineTransform = function (size, t) {
