@@ -1375,7 +1375,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
+
                         var imageFormat = cc.FMT_PNG;
+                        //var imageFormat = cc.getImageFormatByData(buffer); NOT WORKING!
+
                         if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
                             cc.log("cc.ParticleSystem: unknown image format with Data");
                             return false;
