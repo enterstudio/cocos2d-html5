@@ -521,7 +521,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var particle = this._particles[i];
             var lpx = (0 | (particle.size * 0.5));
 
-            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
+            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE || true) {
+
                 var drawTexture = this.getTexture();
 
                 // Delay drawing until the texture is fully loaded by the browser
@@ -530,7 +531,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                 context.save();
                 context.globalAlpha = particle.color.a;
-                context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
+                context.translate((0 | particle.drawPos.x),
+                    -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
                 var w = this._pointRect.size.width;
@@ -540,6 +542,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     Math.max((1 / w) * size, 0.000001),
                     Math.max((1 / h) * size, 0.000001)
                 );
+
 
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
@@ -561,12 +564,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     }
                 }
 
-                context.drawImage(drawTexture, 0, 0);
+                context.drawImage(drawTexture,0,0);
                 context.restore();
 
             } else {
                 context.save();
                 context.globalAlpha = particle.color.a;
+
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
 
                 if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
@@ -574,7 +578,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                         context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
                     cc.drawingUtil.drawStar(context, lpx, particle.color);
                 } else
-                    cc.drawingUtil.drawColorBall(context, lpx, particle.color);
+                    cc.drawingUtil.drawColorBall(context, lpx, {a:1, r:255, g:0, b:0});
                 context.restore();
             }
         }
@@ -582,7 +586,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _drawForWebGL:function (ctx) {
-        if(!this._texture || !this._texture.isLoaded())
+        if(!this._texture)
             return;
 
         var gl = ctx || cc.renderContext;
